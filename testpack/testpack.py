@@ -5,9 +5,19 @@ class TestingPackage:
         self.labels = labels
         self.model = model
     def f1Metrics(self, predicted, trueAnswer):
-        intersectionSize = len(np.intersect1d(predicted, trueAnswer))
-        parameterP = intersectionSize / len(predicted)
-        parameterZ = intersectionSize / len(trueAnswer)
+        countedPred = {}
+        for dish in predicted:
+            if dish in countedPred:
+                countedPred[dish] += 1
+            else:
+                countedPred[dish] = 1
+        intersectSize = 0
+        for dish in trueAnswer:
+            if dish in countedPred and countedPred[dish] > 0:
+                countedPred[dish] -= 1
+                intersectSize += 1
+        parameterP = intersectSize / len(predicted)
+        parameterZ = intersectSize / len(trueAnswer)
         return 0 if parameterP**2 + parameterZ**2 == 0 else 2 * (parameterP * parameterZ) / (parameterP + parameterZ)
     def getTheMetric(self):
         result = .0
