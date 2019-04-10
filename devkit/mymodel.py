@@ -1,7 +1,6 @@
 import numpy as np
 import math
 
-
 class Model:
     def __init__(self, data):
         self.data = data
@@ -26,7 +25,7 @@ class Model:
                 preferences[type] /= typeCounters[type]
         if len(checks):
             typeCounters /= len(checks)
-        return typeCounters, preferences
+        return (typeCounters, preferences)
 
     def getTypes(self, tags):
         return np.array([i for i in range(self.NUM_TYPES) if tags[i] != 0])
@@ -67,7 +66,7 @@ class Model:
         quantedPred, preferences = self.quantedPreds[humanId], self.preferences[humanId]
         thirsts = self.getThirsts(quantedPred, preferences, day, month)
         labels = []
-        sorted = [[] * self.NUM_TYPES]
+        sorted = [[], [], [], [], [], [], [], []]
         for thirst, dish in thirsts:
             types = self.getTypes(self.data.getTagsList(dish))
             for type in types:
