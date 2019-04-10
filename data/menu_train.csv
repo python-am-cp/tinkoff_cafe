@@ -1,4 +1,4 @@
-day,month,good_id,good,first_course,main_course,drink,bakery,dessert,snacks,salad,meat&fish,fried,sweet,salty,spicy,sour,lenten,meat,seafoods,pepper,mushrooms,vegetables,fruits,milk,croups,eggs,pasta,flour,onion_or_garlic,other
+month,day,good_id,good,first_course,main_course,drink,bakery,dessert,snacks,salad,meat&fish,fried,sweet,salty,spicy,sour,lenten,meat,seafoods,pepper,mushrooms,vegetables,fruits,milk,croups,eggs,pasta,flour,onion_or_garlic,other
 1,17,2,Напиток из ягод с/м 200гр,0,0,1,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0
 1,17,3,Хлеб 1 кусочек,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0
 1,17,258,Пирог Осетинский/капустой 1кусок,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0
