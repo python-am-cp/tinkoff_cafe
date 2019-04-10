@@ -1,7 +1,6 @@
 import numpy as np
 import math
 
-
 class Model:
     def __init__(self, data):
         self.data = data
