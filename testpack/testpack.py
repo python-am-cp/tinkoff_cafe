@@ -49,10 +49,13 @@ class TestingPackage:
     def getTheMetric(self):
         result = .0
         count = min(len(self.features), len(self.labels))
-        printProgressBar(0, 100, prefix='Progress:', suffix='Complete', length=50)
+        # printProgressBar(0, 100, prefix='Progress:', suffix='Complete', length=50)
         for index in range(count):
             if index % (count // 100) == 0:
-                printProgressBar(index // (count // 100), 100, prefix='Progress:', suffix='Complete', length=50)
+                print(str(index // (count // 100)) + "%")
+                # printProgressBar(index // (count // 100), 100, prefix='Progress:', suffix='Complete', length=50)
             predicted = self.model.predict(self.features[index])
+            #print(self.features[index])
+            #print("My: ", predicted, "True: ", self.labels[index])
             result += self.f1Metrics(predicted, self.labels[index])
         return 0 if count == 0 else result / count

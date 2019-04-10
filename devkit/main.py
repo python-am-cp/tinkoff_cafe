@@ -12,5 +12,5 @@ for human in data.getPeopleIds():
         labels.append(data.getDishesList(check[0]))
 print("Features and labels was created")
 testpack = tp.TestingPackage(features, labels, model)
-# print("Testing...")
+print("Testing...")
 print(testpack.getTheMetric())
