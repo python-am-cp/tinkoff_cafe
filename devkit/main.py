@@ -1,6 +1,7 @@
 import devkit.data as datapack
 import devkit.mymodel as model
 import testpack.testpack as tp
+
 data = datapack.Data("data/train.csv", "data/menu_train.csv", "data/menu_tagged.csv")
 model = model.Model(data)
 print("Data was readed and precalculated")
