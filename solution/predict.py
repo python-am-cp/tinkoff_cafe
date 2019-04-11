@@ -6,8 +6,8 @@ import pandas as pd
 
 def parse():
     parser = argparse.ArgumentParser(description='Прогнозрование.')
-    parser.add_argument('--test', metavar='--in', type=str, default='train.csv',
-                        help='название файла в формате train.csv')
+    parser.add_argument('--test', metavar='--in', type=str, default='test.csv',
+                        help='название файла в формате test.csv')
     parser.add_argument('--menu', type=str, default='menu_train.csv', help='название файла с меню по дням')
     parser.add_argument('--tags', type=str, default='menu_tagged.csv',
                         help='название файла со всеми блюдами и их характеристиками')
@@ -29,13 +29,9 @@ def main():
     model = solution.Model()
     model.load_params(menu_test_fn, goods_tags_fn)
     test_df = pd.read_csv(test_fn)
-    print(test_df.head())
     res = []
-    for row in test_df.head().values:
+    for row in test_df.values:
         chknum, person_id, month, day, *_ = row
-        ### DEBUG - delete in prod:
-        # month, day, chknum, person_id, *_ = row
-        ### DEBUG END
         labels = list(model.predict([person_id, day, month]))
         res.append([chknum, " ".join([str(i) for i in sorted(labels)])])
     prediction = pd.DataFrame(res, columns=['chknum', 'pred'])
