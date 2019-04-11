@@ -33,10 +33,12 @@ def main():
     res = []
     for row in test_df.head().values:
         chknum, person_id, month, day, *_ = row
+        ### DEBUG - delete in prod:
+        # month, day, chknum, person_id, *_ = row
+        ### DEBUG END
         labels = list(model.predict([person_id, day, month]))
-        for pred in labels:
-            res.append([chknum, person_id, month, day, pred])
-    prediction = pd.DataFrame(res, columns=['chknum', 'person_id', 'month', 'day', 'good_id'])
+        res.append([chknum, " ".join([str(i) for i in sorted(labels)])])
+    prediction = pd.DataFrame(res, columns=['chknum', 'pred'])
     prediction.to_csv(prediction_fn, index=False)
 
 
