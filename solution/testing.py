@@ -1,21 +1,20 @@
 import pandas as pd
-import numpy as np
 import solution as Solver
 import testpack.testpack as tp
 
-# allData = pd.read_csv("data/train.csv")
-# trainSize = int(allData.shape[0] * 0.8)
-# train = allData.iloc[:trainSize, :]
-# test = allData.iloc[trainSize:, :]
-#
-# train.to_csv("solution\_train.csv", index=False)
-# test.to_csv("solution\_test.csv", index=False)
+allData = pd.read_csv("data/train.csv")
+trainSize = int(allData.shape[0] * 0.8)
+train = allData.iloc[:trainSize, :]
+test = allData.iloc[trainSize:, :]
+
+train.to_csv("solution/train.csv", index=False)
+test.to_csv("solution/test.csv", index=False)
 
 model = Solver.Model()
-model.train("solution\_train.csv", "data/menu_train.csv", "data/menu_tagged.csv")
+model.train("solution/train.csv", "data/menu_train.csv", "data/menu_tagged.csv")
 model.load_params("data/menu_train.csv", "data/menu_tagged.csv")
 
-data = Solver.Data("solution\_test.csv", "data/menu_train.csv", "data/menu_tagged.csv")
+data = Solver.Data("solution/test.csv", "data/menu_train.csv", "data/menu_tagged.csv")
 features = []
 labels = []
 for human in data.getPeopleIds():

@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 from collections import defaultdict
 
+
 class Data:
     def __init__(self, trainPath, menuTrainPath, menuTaggedPath):
         self.__loadTrainData(trainPath)
@@ -41,19 +42,20 @@ class Data:
         for row in menu.values:
             self.tagedDishes[row[0]] = row[2:]
 
+
 class Model:
     def __init__(self):
-        self.prefsByHuman = defaultdict(dict) # key - human_id | value - dict of dishes counted in all checks
+        self.prefsByHuman = defaultdict(dict)  # key - human_id | value - dict of dishes counted in all checks
         self.allPeoplePrefs = defaultdict(int)  # key - dish_id, value - count of occurrences in checks
-        self.dailyMenu = defaultdict(list) # menu for every day
+        self.dailyMenu = defaultdict(list)  # menu for every day
         self.quantPreds = defaultdict(list)  # quantitative prediction
-        self.dishTypes = defaultdict(list) # types of dishes
+        self.dishTypes = defaultdict(list)  # types of dishes
         self.paramsIsLoaded = False
 
     def train(self, train, menu_train, goods):
         entriesNum = defaultdict(int)
         dayChecker = defaultdict(bool)
-        self.taggedMenu = pd.read_csv(goods) #for load params
+        self.taggedMenu = pd.read_csv(goods)  # for load params
         self.data = Data(train, menu_train, goods)
         for human in self.data.getPeopleIds():
             self.prefsByHuman[int(human)] = defaultdict(int)
@@ -64,14 +66,15 @@ class Model:
                 self.dishTypes[int(dish[0])] = [i for i in range(len(typeTags)) if typeTags[i]]
             for check in self.data.getChecksList(human):
                 countOfChecks += 1
-                day, month = check[1], check[2] #[1] - day, [2] - month
+                day, month = check[1], check[2]  # [1] - day, [2] - month
                 if not dayChecker[(day, month)]:
                     dayChecker[(day, month)] = True
                     dailyMenu = self.data.getTodayMenu(day, month)
                     for dish in dailyMenu:
                         entriesNum[dish] += 1
-                for dish in self.data.getDishesList(check[0]): #[0] - checkId
-                    self.prefsByHuman[int(human)][int(dish)] += 1 #value - the number of dish occurrences in this person's checks
+                for dish in self.data.getDishesList(check[0]):  # [0] - checkId
+                    self.prefsByHuman[int(human)][
+                        int(dish)] += 1  # value - the number of dish occurrences in this person's checks
                     self.allPeoplePrefs[int(dish)] += 1
                     types = self.dishTypes[dish]
                     for type in types:
@@ -91,22 +94,24 @@ class Model:
         file = open("quantativePredictions", "wb")
         pickle.dump(self.quantPreds, file)
         print("Was trained")
+
     def load_params(self, menuTestFName, taggedMenuFName):
         menuTest = pd.read_csv(menuTestFName)
         self.taggedMenu = pd.read_csv(taggedMenuFName)
         for dish in self.taggedMenu.values:
             typeTags = dish[2:10].tolist()
             self.dishTypes[int(dish[0])] = [i for i in range(len(typeTags)) if typeTags[i]]
-        for row in menuTest.values: # Creatring daily menu:
+        for row in menuTest.values:  # Creatring daily menu:
             month, day, goodId = [int(row[i]) for i in range(3)]
             self.dailyMenu[(day, month)].append(goodId)
-        file = open("preferencesByHuman", "rb") # Load model params (blaclbox):
+        file = open("preferencesByHuman", "rb")  # Load model params (blaclbox):
         self.prefsByHuman = pickle.load(file)
         file = open("allPeoplePreferences", "rb")
         self.allPeoplePrefs = pickle.load(file)
         file = open("quantativePredictions", "rb")
         self.quantPreds = pickle.load(file)
         self.paramsIsLoaded = True
+
     def getValueByQuant(self, quantativePred):
         answer = [0] * 8
         for type in range(len(quantativePred)):
@@ -114,35 +119,31 @@ class Model:
             upperChance = upper - quantativePred[type]
             answer[type] = upper if np.random.rand() > upperChance else bottom
         return answer
+
     def predict(self, features):
-        copyAllPeople = self.allPeoplePrefs.copy()
-        assert self.paramsIsLoaded # Please call .load_params(...)
+        assert self.paramsIsLoaded  # Please call .load_params(...)
         humanId, day, month = features
+        preferences = []
         if humanId not in self.prefsByHuman:
             preferences = self.allPeoplePrefs
         else:
             preferences = self.prefsByHuman[humanId]
-        assert (day, month) in self.dailyMenu # No information on today's menu in menuTestFName
+
+        assert (day, month) in self.dailyMenu, (day, month, features)  # No information on today's menu in menuTestFName
         todayMenu = self.dailyMenu[(day, month)]
         sortedDishes = defaultdict(list)
         for dish in todayMenu:
             types = self.dishTypes[dish]
             for type in types:
+                # if preferences[dish] == 0: #PROVERIT ETU TEORIO
+                #    preferences[dish] = self.allPeoplePrefs[dish] #PROVERITb
                 sortedDishes[type].append((preferences[dish], dish))
-        # for type in range(8):
-        #     allZero = True
-        #     for thirsts, dish in sortedDishes[type]:
-        #         if thirsts != 0:
-        #             allZero = False
-        #             break
-        #     if allZero:
-        #         for index in range(len(sortedDishes[type])):
-        #             sortedDishes[type][index] = (copyAllPeople[sortedDishes[type][index][1]], sortedDishes[type][index][1])
         labels = []
         quantPreds = self.getValueByQuant(self.quantPreds[humanId])
+        # print(self.quantPreds[humanId])
         for type in range(8):
             sortedDishes[type].sort(reverse=True)
             for counter in range(quantPreds[type]):
                 if len(sortedDishes[type]):
-                    labels.append(sortedDishes[type][0][1]) #[0] - [0] - лучшее блюдо. [1] - его id
+                    labels.append(sortedDishes[type][0][1])
         return labels
