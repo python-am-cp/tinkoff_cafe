@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
 
-
 class Data:
     def __init__(self, trainPath, menuTrainPath, menuTaggedPath):
         self.__loadTrainData(trainPath)
@@ -39,3 +38,4 @@ class Data:
         self.tagedDishes = {}
         for row in menu.values:
             self.tagedDishes[row[0]] = row[2:]
+
