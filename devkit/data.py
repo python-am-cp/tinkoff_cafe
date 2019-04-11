@@ -29,7 +29,8 @@ class Data:
         self.dishesByChecks = {}  # key: check id;  value: list of dish ids...
         CHECK_ID, PERSON_ID, DAY, MONTH, GOOD_ID = 0, 1, 3, 2, 5
         for row in train.values:
-            self.checksByPeople.setdefault(row[PERSON_ID], set()).add((int(row[CHECK_ID][2:]), row[DAY], row[MONTH]))
+            self.checksByPeople.setdefault(row[PERSON_ID], set())\
+                .add((int(row[CHECK_ID][2:]), row[DAY], row[MONTH]))
             self.dishesByChecks.setdefault(int(row[CHECK_ID][2:]), []).append(row[GOOD_ID])
 
     def __loadMenuData(self, menuTaggedPath, menuTrainPath):
