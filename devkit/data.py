@@ -8,20 +8,20 @@ class Data:
         self.__loadMenuData(menuTaggedPath, menuTrainPath)
 
     def getPeopleIds(self):
-        return np.fromiter(self.checksByPeople.keys(), dtype=int)  # Maybe ok
+        return np.fromiter(self.checksByPeople.keys(), dtype=int)
 
     def getChecksList(self, humanId):
-        return np.array(list(self.checksByPeople[humanId]), dtype=int)  # OK
+        return np.array(list(self.checksByPeople[humanId]), dtype=int)
 
-    def getDishesList(self, checkId, day=0, month=0):  # OK
+    def getDishesList(self, checkId, day=0, month=0):
         return np.array(self.dishesByChecks[checkId])
 
-    def getTagsList(self, dish):  # OK
+    def getTagsList(self, dish):
         return np.array(self.tagedDishes[dish])
 
     def getTodayMenu(self, day, month):
         return self.menuTrain[(self.menuTrain["day"] == day) & (self.menuTrain["month"] == month)][
-            "good_id"].values  # Maybe ok
+            "good_id"].values
 
     def __loadTrainData(self, trainPath):
         train = pd.read_csv(trainPath)

@@ -11,11 +11,11 @@ class Model:
         self.precalc()
 
     def getPreferences(self, humanId):
-        NUM_TAGS = 9
-        checks = self.data.getChecksList(humanId)
         preferences = np.zeros(shape=(self.NUM_TYPES, self.NUM_TAGS))
         typeCounters = np.zeros(self.NUM_TYPES)
-        for check in checks:
+        checks = self.data.getChecksList(humanId)
+        trainChecks = checks[0:int(len(checks) * 0.8)]
+        for check in trainChecks:
             for dish in self.data.getDishesList(check[0]):
                 tags = self.data.getTagsList(dish)
                 types = self.getTypes(tags)
@@ -38,7 +38,6 @@ class Model:
             bottom, upper = math.floor(typeCounter[type]), math.ceil(typeCounter[type])
             upperChance = upper - typeCounter[type]
             answer[type] = upper if np.random.rand() > upperChance else bottom
-        # print("A: ", answer)
         return answer
 
     def getThirsts(self, quantedPred, preferences, day, month):
@@ -64,10 +63,8 @@ class Model:
 
     def predict(self, features):
         humanId, day, month = features
-        #print("D:", self.quantedPreds)
         quantedPred, preferences = self.quantedPreds[humanId].copy(), self.preferences[humanId]
         thirsts = self.getThirsts(quantedPred, preferences, day, month)
-        #print("Q: ", quantedPred)
         labels = []
         sorted = [[], [], [], [], [], [], [], []]
         for thirst, dish in thirsts:
