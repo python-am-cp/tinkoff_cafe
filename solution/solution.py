@@ -115,24 +115,34 @@ class Model:
             answer[type] = upper if np.random.rand() > upperChance else bottom
         return answer
     def predict(self, features):
+        copyAllPeople = self.allPeoplePrefs.copy()
         assert self.paramsIsLoaded # Please call .load_params(...)
         humanId, day, month = features
-        assert humanId in self.prefsByHuman # Unknown human. # Это не должно быть так! Но мы это, никому не скажем ;)
-        preferences = self.prefsByHuman[humanId]
+        if humanId not in self.prefsByHuman:
+            preferences = self.allPeoplePrefs
+        else:
+            preferences = self.prefsByHuman[humanId]
         assert (day, month) in self.dailyMenu # No information on today's menu in menuTestFName
         todayMenu = self.dailyMenu[(day, month)]
         sortedDishes = defaultdict(list)
         for dish in todayMenu:
             types = self.dishTypes[dish]
             for type in types:
-                #if preferences[dish] == 0: #PROVERIT ETU TEORIO
-                #    preferences[dish] = self.allPeoplePrefs[dish] #PROVERITb
                 sortedDishes[type].append((preferences[dish], dish))
+        # for type in range(8):
+        #     allZero = True
+        #     for thirsts, dish in sortedDishes[type]:
+        #         if thirsts != 0:
+        #             allZero = False
+        #             break
+        #     if allZero:
+        #         for index in range(len(sortedDishes[type])):
+        #             sortedDishes[type][index] = (copyAllPeople[sortedDishes[type][index][1]], sortedDishes[type][index][1])
         labels = []
         quantPreds = self.getValueByQuant(self.quantPreds[humanId])
-        print(self.quantPreds[humanId])
         for type in range(8):
             sortedDishes[type].sort(reverse=True)
             for counter in range(quantPreds[type]):
-                labels.append(sortedDishes[type][0][1])
+                if len(sortedDishes[type]):
+                    labels.append(sortedDishes[type][0][1]) #[0] - [0] - лучшее блюдо. [1] - его id
         return labels
