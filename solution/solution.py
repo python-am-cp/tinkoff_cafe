@@ -117,7 +117,7 @@ class Model:
         for type in range(len(quantativePred)):
             bottom, upper = math.floor(quantativePred[type]), math.ceil(quantativePred[type])
             upperChance = upper - quantativePred[type]
-            answer[type] = upper if np.random.rand() > upperChance else bottom
+            answer[type] = upper if np.random.rand() + 0.25 > upperChance else bottom
         return answer
 
     def predict(self, features):
@@ -140,7 +140,6 @@ class Model:
                 sortedDishes[type].append((preferences[dish], dish))
         labels = []
         quantPreds = self.getValueByQuant(self.quantPreds[humanId])
-        # print(self.quantPreds[humanId])
         for type in range(8):
             sortedDishes[type].sort(reverse=True)
             for counter in range(quantPreds[type]):

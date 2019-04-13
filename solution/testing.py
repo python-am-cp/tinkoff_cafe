@@ -7,14 +7,14 @@ trainSize = int(allData.shape[0] * 0.8)
 train = allData.iloc[:trainSize, :]
 test = allData.iloc[trainSize:, :]
 
-train.to_csv("solution/train.csv", index=False)
-test.to_csv("solution/test.csv", index=False)
+train.to_csv("solution/_train.csv", index=False)
+test.to_csv("solution/_test.csv", index=False)
 
 model = Solver.Model()
-model.train("solution/train.csv", "data/menu_train.csv", "data/menu_tagged.csv")
+model.train("solution/_train.csv", "data/menu_train.csv", "data/menu_tagged.csv")
 model.load_params("data/menu_train.csv", "data/menu_tagged.csv")
 
-data = Solver.Data("solution/test.csv", "data/menu_train.csv", "data/menu_tagged.csv")
+data = Solver.Data("solution/_test.csv", "data/menu_train.csv", "data/menu_tagged.csv")
 features = []
 labels = []
 for human in data.getPeopleIds():
@@ -26,4 +26,12 @@ for human in data.getPeopleIds():
 
 print("Features and labels was created")
 testpack = tp.TestingPackage(features, labels, model)
-print(testpack.getTheMetric())
+
+middle, midP, midZ, N = 0, 0, 0, 10
+for i in range(N):
+    print("{:d}/{:d}".format(i, N))
+    (f1, p, z) = testpack.getTheMetric(False)
+    middle += f1
+    midP += p
+    midZ += z
+print("RESULT: ", middle / N, midP / N, midZ / N)

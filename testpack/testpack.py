@@ -6,7 +6,7 @@ class TestingPackage:
 
     def f1Metrics(self, predicted, trueAnswer):
         if len(predicted) == 0:
-            return 0
+            return (0, 0)
         countedPred = {}
         for dish in predicted:
             if dish in countedPred:
@@ -20,14 +20,19 @@ class TestingPackage:
                 intersectSize += 1
         parameterP = intersectSize / len(predicted)
         parameterZ = intersectSize / len(trueAnswer)
-        return 0 if intersectSize == 0 else 2 * (parameterP * parameterZ) / (parameterP + parameterZ)
+        return (parameterP, parameterZ)
 
-    def getTheMetric(self):
-        result = .0
+    def getTheMetric(self, prints = True):
+        result, midP, midZ = .0, .0, .0
         count = min(len(self.features), len(self.labels))
         for index in range(count):
             if index % (count // 100) == 0:
-                print(str(index // (count // 100)) + "%")
+                if prints:
+                    print(str(index // (count // 100)) + "%")
             predicted = self.model.predict(self.features[index])
-            result += self.f1Metrics(predicted, self.labels[index])
-        return 0 if count == 0 else result / count
+            p, z = self.f1Metrics(predicted, self.labels[index])
+            midP += p
+            midZ += z
+            if p + z != 0:
+                result += 2 * (p * z) / (p + z)
+        return (result / count, midP / count, midZ / count)
