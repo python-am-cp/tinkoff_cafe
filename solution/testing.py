@@ -24,6 +24,7 @@ for human in data.getPeopleIds():
         features.append([human, check[1], check[2]])
         labels.append(data.getDishesList(check[0]))
 
+print("Test on {} checks".format(len(features)))
 print("Features and labels was created")
 testpack = tp.TestingPackage(features, labels, model)
 
